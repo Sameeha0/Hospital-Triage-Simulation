@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How to Play - Hospital Triage Simulation</title>
+    <link rel="stylesheet" href="/static/style.css" />
+    <style>
+      .guide-main{display:flex;flex-direction:column;align-items:center}
+      .guide-intro{color:var(--text);max-width:820px;text-align:center;margin:0 auto}
+      .guide-max{max-width:1000px;margin:20px auto}
+      .guide-note{color:var(--text)}
+      .guide-sections{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:20px 0}
+      .guide-card{background:var(--card);padding:18px;border-radius:12px;border:1px solid rgba(0,188,212,0.3);box-shadow:0 8px 30px rgba(0,188,212,0.15);transition:transform .2s,box-shadow .2s}
+      .guide-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,188,212,0.25)}
+      .guide-card h3{color:var(--accent);margin-top:0}
+      .guide-card li{color:var(--text);margin-bottom:8px}
+      .back-link{display:inline-block;margin-top:20px;color:var(--accent);text-decoration:none;font-weight:600;transition:color .2s}
+      .back-link:hover{color:#80deea}
+      @media (max-width:700px){
+        .guide-sections{grid-template-columns:1fr}
+        .guide-card{padding:14px}
+        .guide-intro{font-size:14px}
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="top-row">
+          <h1>How to Play</h1>
+          <nav class="nav">
+            <a href="/">Game</a>
+            <a href="/guide">Guide</a>
+            <a href="/analytics">Analytics</a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="guide-main">
+        <p class="guide-intro">This simulation places you in the role of a hospital triage officer during an infectious disease outbreak. Patients arrive one at a time. For each patient you must choose one action: <strong>Admit</strong>, <strong>Discharge</strong>, or <strong>Isolate</strong>.</p>
+
+        <div class="guide-sections guide-max">
+          <div class="guide-card">
+            <h3>What you see</h3>
+            <ul>
+              <li><strong>Age</strong> - patient age (1-90)</li>
+              <li><strong>Symptoms</strong> - visible symptoms</li>
+              <li><strong>Exposure</strong> - recent exposure history</li>
+              <li><strong>Comorbidity</strong> - chronic conditions</li>
+              <li><strong>Risk badge</strong> - Low/Medium/High</li>
+            </ul>
+          </div>
+
+          <div class="guide-card">
+            <h3>Your Decisions</h3>
+            <ul>
+              <li><strong>Admit</strong> - bring to hospital (uses bed)</li>
+              <li><strong>Discharge</strong> - send home (efficient for low-risk)</li>
+              <li><strong>Isolate</strong> - isolate and treat (protects staff)</li>
+            </ul>
+          </div>
+
+          <div class="guide-card">
+            <h3>Dashboard Metrics</h3>
+            <ul>
+              <li>Available beds</li>
+              <li>Day counter</li>
+              <li>Patients treated</li>
+              <li>Deaths & recovered</li>
+              <li>Infected staff</li>
+              <li>Public trust %</li>
+            </ul>
+          </div>
+
+          <div class="guide-card">
+            <h3>End Conditions</h3>
+            <p class="guide-note">Game ends when:</p>
+            <ul>
+              <li>Beds reach zero</li>
+              <li>Public trust reaches 0%</li>
+              <li>Day reaches 15</li>
+            </ul>
+          </div>
+
+          <div class="guide-card">
+            <h3>Strategic Tips</h3>
+            <ul>
+              <li>Balance resource use vs. trust</li>
+              <li>Isolate high-risk patients safely</li>
+              <li>Monitor staff infections</li>
+              <li>Watch trust trends</li>
+            </ul>
+          </div>
+
+          <div class="guide-card">
+            <h3>Design Notes</h3>
+            <p class="guide-note">Self-contained Flask backend with vanilla JS frontend. Deterministic enough to teach trade-offs while remaining engaging.</p>
+          </div>
+        </div>
+
+        <a href="/" class="back-link">&larr; Back to game</a>
+      </main>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hospital Triage Simulation</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body class="game-bg">
+    <div class="container">
+      <header>
+        <div class="top-row">
+          <h1>Hospital Triage Simulation</h1>
+          <nav class="nav">
+            <a href="/guide">Guide</a>
+            <a href="/analytics">Analytics</a>
+          </nav>
+        </div>
+        <p class="subtitle">Play as a triage officer during an outbreak - balance care, resources, and public trust.</p>
+      </header>
+
+      <section class="dashboard">
+        <div class="stat">
+          <strong>Day:</strong> <span id="day">-</span>
+        </div>
+        <div class="stat">
+          <strong>Available beds:</strong> <span id="beds">-</span>
+          <div class="bar">
+            <div id="beds-bar" class="progress"></div>
+          </div>
+        </div>
+        <div class="stat">
+          <strong>Public trust:</strong> <span id="trust">-</span>%
+          <div class="bar">
+            <div id="trust-bar" class="progress trust"></div>
+          </div>
+        </div>
+        <div class="stat small">
+          <div>Patients treated: <span id="treated">0</span></div>
+          <div>Deaths: <span id="deaths">0</span></div>
+          <div>Recovered: <span id="recovered">0</span></div>
+          <div>Infected staff: <span id="staff">0</span></div>
+        </div>
+      </section>
+
+      <main>
+        <section class="patient-card" id="patient-card">
+          <h2>Patient</h2>
+          <div id="patient-info" class="patient-top">
+            <div class="avatar" id="avatar" aria-hidden="true"></div>
+            <div class="patient-details">
+              <div class="detail"><strong>Age:</strong> <span id="age">-</span></div>
+              <div class="detail"><strong>Symptoms:</strong> <span id="symptoms">-</span></div>
+              <div class="detail"><strong>Exposure:</strong> <span id="exposure">-</span></div>
+              <div class="detail"><strong>Comorbidity:</strong> <span id="comorbidity">-</span></div>
+            </div>
+            <div class="badge-wrap">
+              <span id="risk-badge" class="badge low">-</span>
+            </div>
+          </div>
+          <div class="actions">
+            <button id="admit">Admit</button>
+            <button id="discharge">Discharge</button>
+            <button id="isolate">Isolate</button>
+          </div>
+          <div class="extra-actions">
+            <div class="export-group" id="export">
+              <span class="export-label">Export report:</span>
+              <button id="export-json" class="muted" data-format="json">JSON</button>
+              <button id="export-csv" class="muted" data-format="csv">CSV</button>
+              <button id="restart-mid" class="muted danger">Restart Game</button>
+            </div>
+          </div>
+          <div id="message" class="message"></div>
+        </section>
+      </main>
+
+      <div id="final" class="overlay hidden">
+        <div class="final-box">
+          <h2>Final Report</h2>
+          <div id="final-stats"></div>
+          <a class="muted" href="/analytics">View Analytics</a>
+          <button id="restart">Restart Game</button>
+        </div>
+      </div>
+
+      <footer>
+        <small>Educational simulation - not medical advice.</small>
+      </footer>
+    </div>
+
+    <script src="/static/script.js"></script>
+  </body>
+</html>

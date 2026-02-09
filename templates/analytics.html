@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Analytics - Hospital Triage Simulation</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="top-row">
+          <h1>Analytics</h1>
+          <nav class="nav">
+            <a href="/">Game</a>
+            <a href="/guide">Guide</a>
+            <a href="/analytics">Analytics</a>
+          </nav>
+        </div>
+        <p class="subtitle">A visual dashboard of trust, capacity, and outcomes over time.</p>
+      </header>
+
+      <section class="analytics">
+        <div class="analytics-head">
+          <h2>Outcome Dashboard</h2>
+          <p class="muted-text">Trends are based on your current session.</p>
+        </div>
+        <div class="analytics-grid">
+          <div class="metric">
+            <div class="metric-label">Survival Rate</div>
+            <div class="metric-value" id="metric-survival">-</div>
+            <div class="metric-sub" id="metric-survival-sub">-</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Staff Impact</div>
+            <div class="metric-value" id="metric-staff">-</div>
+            <div class="metric-sub" id="metric-staff-sub">-</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Trust Momentum</div>
+            <div class="metric-value" id="metric-trust">-</div>
+            <div class="metric-sub" id="metric-trust-sub">-</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Bed Utilization</div>
+            <div class="metric-value" id="metric-beds">-</div>
+            <div class="metric-sub" id="metric-beds-sub">-</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chart-grid">
+        <div class="chart-card">
+          <h3>Public Trust Over Days</h3>
+          <canvas id="chart-trust" width="900" height="300"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Bed Utilization Over Days</h3>
+          <canvas id="chart-beds" width="900" height="300"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Outcomes</h3>
+          <canvas id="chart-outcomes" width="900" height="300"></canvas>
+        </div>
+      </section>
+
+      <section class="analytics export-zone" id="export">
+        <div class="analytics-head">
+          <h2>Export Reports</h2>
+          <p class="muted-text">Download the latest summary in the format your tools prefer.</p>
+        </div>
+        <div class="export-group">
+          <span class="export-label">Export report:</span>
+          <button id="export-json" class="muted" data-format="json">JSON</button>
+          <button id="export-csv" class="muted" data-format="csv">CSV</button>
+        </div>
+      </section>
+
+      <footer>
+        <small>Educational simulation - not medical advice.</small>
+      </footer>
+    </div>
+
+    <script src="/static/analytics.js"></script>
+  </body>
+</html>
