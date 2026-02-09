@@ -5,6 +5,7 @@ This repository is a compact web simulation used as a portfolio piece to demonst
 **Project goal:** showcase how languages, libraries, and data are combined to build an interactive, teachable simulation.
 
 **Live preview:** https://hospital-triage-simulation.onrender.com/ 
+
 Why this project
 ----------------
 - Demonstrates clean backend design with Python and Flask.
