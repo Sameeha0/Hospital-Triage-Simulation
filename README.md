@@ -14,7 +14,6 @@ Why this project
 
 A compact, web-based simulation that models hospital triage decision-making during an infectious-disease outbreak. The application is small, easy to run locally, and built to showcase backend + frontend skills in a single project.
 
-## What changed (final updates)
 - Game length shortened to 15 days (quicker runs and faster feedback loops).
 - Animated 3D gradient background with layered radial glow for depth.
 - Mobile responsiveness fully implemented (desktop grid → tablet 2-col → mobile stacked layout).
