@@ -103,7 +103,9 @@ function updateMetrics(summary){
   document.getElementById('metric-staff').textContent = `${staffImpact}%`
   document.getElementById('metric-staff-sub').textContent = `${summary.infected_staff} staff infections`
   document.getElementById('metric-trust').textContent = `${trust}%`
-  document.getElementById('metric-trust-sub').textContent = `${summary.rating} outlook`
+  document.getElementById('metric-trust-sub').textContent = summary.patients_treated
+    ? `${summary.rating} outlook`
+    : 'No patients triaged yet'
   const utilization = Math.round(((summary.total_beds - summary.available_beds) / summary.total_beds) * 100)
   document.getElementById('metric-beds').textContent = `${utilization}%`
   document.getElementById('metric-beds-sub').textContent = `${summary.total_beds - summary.available_beds} of ${summary.total_beds} occupied`

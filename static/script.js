@@ -142,9 +142,7 @@ async function downloadFinal(format) {
     const url = `/export?format=${encodeURIComponent(format)}`
     const a = document.createElement('a')
     a.href = url
-    a.download = format === 'json'
-      ? 'triage-summary.json'
-      : (format === 'csv' ? 'triage-summary.csv' : 'triage-summary.xlsx')
+    a.download = format === 'json' ? 'triage-summary.json' : 'triage-summary.csv'
     document.body.appendChild(a)
     a.click()
     a.remove()

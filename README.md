@@ -20,7 +20,7 @@ Why this project
 - Three actions per patient: Admit, Discharge, Isolate.
 - Hidden deterministic risk scoring (age, fever, breathlessness, exposure, comorbidity).
 - Live dashboard: day counter, available beds, patients treated, deaths, recovered, infected staff, public trust.
-- Restart game and Export final report (JSON / CSV / XLSX via `/export?format=...`).
+- Restart game and Export final report (JSON / CSV via `/export?format=...`; `xlsx` returns a CSV that Excel opens).
 -  Game length shortened to 15 days (quicker runs and faster feedback loops).
 - Clinical dashboard design: dark navy surfaces, a cyan accent, and green / amber / red risk colours, over a softly tinted hospital ward background.
 - Mobile responsiveness fully implemented (desktop grid → tablet 2-col → mobile stacked layout).
@@ -75,7 +75,7 @@ python app.py
 1. Review the patient card (age, symptoms, exposure, comorbidity, risk badge).
 2. Choose one action: `Admit`, `Discharge`, or `Isolate`.
 3. The server evaluates your choice and advances the day. The dashboard updates accordingly.
-4. Game ends when: beds reach zero, public trust reaches 0, or day > 15.
+4. Game ends when: beds reach zero, public trust reaches 0, or day 15 is completed.
 
 ## UI / UX notes
 - **Design system:** one stylesheet (`static/style.css`) with colour, radius and easing tokens shared by all three pages; Inter for type, tabular numbers for stats.
@@ -93,7 +93,7 @@ python app.py
 - `GET /guide` — gameplay guide
 - `GET /new_patient` — returns `{ patient, state }`
 - `POST /decision` — JSON `{ action: 'Admit'|'Discharge'|'Isolate' }`
-- `GET /export?format=json|csv|xlsx` — export session summary
+- `GET /export?format=json|csv` — export session summary
 
 ## Local avatars
 Place images (png/jpg/webp) in the following folders to use local avatars:

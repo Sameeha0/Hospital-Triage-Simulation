@@ -1,3 +1,5 @@
+import csv
+import io
 import os
 import random
 import re
@@ -10,10 +12,14 @@ from uuid import uuid4
 from flask import Flask, Response, jsonify, render_template, request, session
 
 app = Flask(__name__)
-app.secret_key = "change-this-secret-for-production"
+# Set SECRET_KEY in the hosting environment (e.g. Render). The fallback is only for local
+# development; a fixed value keeps sessions working if the server runs several workers.
+app.secret_key = os.environ.get("SECRET_KEY", "dev-only-secret-set-SECRET_KEY-in-production")
 
 # In-memory store for game states keyed by session id
 GAMES = {}
+MAX_GAMES = 500  # oldest games are dropped so memory cannot grow forever
+VALID_ACTIONS = {"Admit", "Discharge", "Isolate"}
 
 SYMPTOMS = ["fever", "cough", "breathlessness", "fatigue", "none"]
 COMORBIDITIES = ["none", "diabetes", "asthma", "heart disease"]
@@ -194,15 +200,16 @@ class GameController:
                 msg = "Low-risk patient isolated (conservative), public felt reassured."
             self.hospital.patients_treated += 1
 
-        self.day += 1
         self.hospital.day_tick()
         self.hospital.public_trust = max(0, min(100, self.hospital.public_trust))
         if (
             self.hospital.beds_available == 0
             or self.hospital.public_trust == 0
-            or self.day > DAY_LIMIT
+            or self.day >= DAY_LIMIT
         ):
             self.game_over = True
+        else:
+            self.day += 1
         self.record_state()
         return msg
 
@@ -213,6 +220,8 @@ def get_game():
         gid = str(uuid4())
         session["game_id"] = gid
         GAMES[gid] = GameController()
+        while len(GAMES) > MAX_GAMES:
+            GAMES.pop(next(iter(GAMES)))
     return GAMES[gid]
 
 
@@ -324,7 +333,10 @@ def serialize_state(game: GameController):
 def game_summary(game: GameController):
     s = serialize_state(game)
     score = s["recovered"] - s["deaths"] - s["infected_staff"]
-    if score > 10:
+    if s["patients_treated"] == 0 and s["deaths"] == 0:
+        rating = "Not started"
+        narrative = "Triage your first patient to see how your hospital is doing."
+    elif score > 10:
         rating = "Hero"
         narrative = "You managed scarce resources wisely and saved many lives."
     elif score > 0:
@@ -363,8 +375,10 @@ def new_patient():
 
 @app.route("/decision", methods=["POST"])
 def decision():
-    data = request.get_json() or {}
+    data = request.get_json(silent=True) or {}
     action = data.get("action")
+    if action not in VALID_ACTIONS:
+        return jsonify({"error": "action must be Admit, Discharge or Isolate"}), 400
     game = get_game()
     if game.game_over:
         return jsonify({"game_over": True, "final": game_summary(game)})
@@ -401,7 +415,7 @@ def restart():
 
 @app.route("/export")
 def export():
-    """Return the current game summary in JSON, CSV, or Excel-friendly CSV."""
+    """Return the current game summary as JSON or CSV ("xlsx" also returns CSV, which Excel opens)."""
     game = get_game()
     summary = game_summary(game)
     fmt = (request.args.get("format") or "json").lower()
@@ -419,14 +433,15 @@ def export():
             "infected_staff",
             "public_trust",
         ]
-        values = [str(summary.get(h, "")) for h in headers]
-        csv_body = ",".join(headers) + "\n" + ",".join(values) + "\n"
-        filename = "triage-summary.csv" if fmt == "csv" else "triage-summary.xlsx"
-        content_type = "text/csv" if fmt == "csv" else "application/vnd.ms-excel"
+        # csv.writer quotes values that contain commas (the narrative does)
+        buffer = io.StringIO()
+        writer = csv.writer(buffer)
+        writer.writerow(headers)
+        writer.writerow([summary.get(h, "") for h in headers])
         return Response(
-            csv_body,
-            mimetype=content_type,
-            headers={"Content-Disposition": f"attachment; filename={filename}"},
+            buffer.getvalue(),
+            mimetype="text/csv",
+            headers={"Content-Disposition": "attachment; filename=triage-summary.csv"},
         )
 
     if fmt == "json":
