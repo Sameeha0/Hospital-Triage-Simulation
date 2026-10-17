@@ -53,14 +53,30 @@ function renderPatient(p) {
   document.getElementById('symptoms').textContent = p.symptoms.join(', ')
   document.getElementById('exposure').textContent = p.exposure ? 'Yes' : 'No'
   document.getElementById('comorbidity').textContent = p.comorbidity
-  document.getElementById('message').textContent = ''
+  // The outcome message of the last decision stays visible until the next decision
 
   const risk = p.risk || 'Low'
   const badge = document.getElementById('risk-badge')
   badge.className = `badge ${risk.toLowerCase()}`
-  badge.textContent = risk
+  badge.textContent = `${risk} risk`
 
   loadAvatar(p.age)
+  announcePatient()
+}
+
+// Short fade-in so the user notices a new patient has arrived (skipped if reduced motion is on)
+function announcePatient() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  document.getElementById('patient-info').animate(
+    [{opacity: 0, transform: 'translateY(6px)'}, {opacity: 1, transform: 'translateY(0)'}],
+    {duration: 240, easing: 'cubic-bezier(0.23, 1, 0.32, 1)'}
+  )
+}
+
+function setDecisionButtonsDisabled(disabled) {
+  ['admit', 'discharge', 'isolate'].forEach((id) => {
+    document.getElementById(id).disabled = disabled
+  })
 }
 
 function renderState(s) {
@@ -71,39 +87,53 @@ function renderState(s) {
   document.getElementById('recovered').textContent = s.recovered
   document.getElementById('staff').textContent = s.infected_staff
   document.getElementById('trust').textContent = s.public_trust
-  const bedsPct = Math.round((s.available_beds / s.total_beds) * 100)
-  document.getElementById('beds-bar').style.width = `${bedsPct}%`
-  document.getElementById('trust-bar').style.width = `${s.public_trust}%`
+  // Bars use scaleX (transform) instead of width so the animation stays smooth
+  const bedsRatio = s.available_beds / s.total_beds
+  document.getElementById('beds-bar').style.transform = `scaleX(${bedsRatio})`
+  document.getElementById('trust-bar').style.transform = `scaleX(${s.public_trust / 100})`
 }
 
 async function sendDecision(action) {
-  const res = await fetch('/decision', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({action})
-  })
-  const data = await res.json()
-  if (data.game_over) {
-    showFinal(data.final)
-    return
+  setDecisionButtonsDisabled(true)
+  try {
+    const res = await fetch('/decision', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({action})
+    })
+    const data = await res.json()
+    if (data.game_over) {
+      showFinal(data.final)
+      return
+    }
+    document.getElementById('message').textContent = data.message || ''
+    renderState(data.state)
+    patient = data.patient
+    // Give the user a moment to read the outcome before the next patient appears
+    setTimeout(() => {
+      renderPatient(patient)
+      setDecisionButtonsDisabled(false)
+    }, 600)
+  } catch (e) {
+    setDecisionButtonsDisabled(false)
   }
-  document.getElementById('message').textContent = data.message || ''
-  renderState(data.state)
-  patient = data.patient
-  setTimeout(() => renderPatient(patient), 600)
 }
 
 function showFinal(final) {
   const el = document.getElementById('final')
   const stats = document.getElementById('final-stats')
   stats.innerHTML = `
-    <p><strong>Rating:</strong> ${final.rating}</p>
-    <p>${final.narrative}</p>
-    <p>Days: ${final.day}</p>
-    <p>Recovered: ${final.recovered} - Deaths: ${final.deaths}</p>
-    <p>Infected staff: ${final.infected_staff}</p>
-    <p>Public trust: ${final.public_trust}%</p>
+    <span class="final-rating">${final.rating}</span>
+    <p class="final-narrative">${final.narrative}</p>
+    <div class="final-grid">
+      <div><span>Days survived</span><strong>${final.day}</strong></div>
+      <div><span>Public trust</span><strong>${final.public_trust}%</strong></div>
+      <div><span>Recovered</span><strong>${final.recovered}</strong></div>
+      <div><span>Deaths</span><strong>${final.deaths}</strong></div>
+      <div><span>Staff infected</span><strong>${final.infected_staff}</strong></div>
+    </div>
   `
+  setDecisionButtonsDisabled(false)
   el.classList.remove('hidden')
 }
 

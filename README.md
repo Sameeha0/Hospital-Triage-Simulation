@@ -6,6 +6,8 @@ This repository is a compact web simulation used as a portfolio piece to demonst
 
 **Live preview:** https://hospital-triage-simulation.onrender.com/ 
 
+![Game screen](docs/screenshot-game.png)
+
 Why this project
 ----------------
 - Demonstrates clean backend design with Python and Flask.
@@ -20,13 +22,13 @@ Why this project
 - Live dashboard: day counter, available beds, patients treated, deaths, recovered, infected staff, public trust.
 - Restart game and Export final report (JSON / CSV / XLSX via `/export?format=...`).
 -  Game length shortened to 15 days (quicker runs and faster feedback loops).
-- Animated 3D gradient background with layered radial glow for depth.
+- Clinical dashboard design: dark navy surfaces, a cyan accent, and green / amber / red risk colours, over a softly tinted hospital ward background.
 - Mobile responsiveness fully implemented (desktop grid → tablet 2-col → mobile stacked layout).
 - Guide page centered and card grid constrained for consistent layouts on all screens.
 - Restart flow fixed so the final-report overlay closes cleanly and a fresh session starts on restart.
-- Restart button styled and given solid visual affordance (cyan gradient, hover/active states).
-- Avatar system improved: attempts to use local avatar buckets first, then falls back to high-quality cartoon avatars (uifaces style) or an inline SVG placeholder; animation applied to avatars for liveliness.
-- Final report overlay styling improved and made non-animated to avoid layout jumps.
+- Clear action hierarchy: Admit (primary), Isolate (amber, protective) and Discharge (neutral), with icons, press feedback and keyboard focus rings.
+- Avatar system improved: attempts to use local avatar buckets first, then falls back to high-quality cartoon avatars (uifaces style) or an inline SVG placeholder, with a loading shimmer while the image arrives.
+- Final report shown as a dialog with a summary grid; it fades and scales in once (200-240 ms), and all motion is switched off for users who prefer reduced motion.
 
 ## Languages & Tools
 - **Python 3 + Flask:** backend routes, session/state management, deterministic scoring logic, and JSON export endpoints.
@@ -76,8 +78,14 @@ python app.py
 4. Game ends when: beds reach zero, public trust reaches 0, or day > 15.
 
 ## UI / UX notes
+- **Design system:** one stylesheet (`static/style.css`) with colour, radius and easing tokens shared by all three pages; Inter for type, tabular numbers for stats.
+- **Motion with a purpose only:** no constant floating or pulsing. A new patient fades in (240 ms), progress bars animate with `transform` instead of `width`, buttons scale to 0.97 when pressed, and `prefers-reduced-motion` turns animation off.
+- **Feedback:** decision buttons are disabled while a decision is processed (no double submits), and the outcome message stays visible until the next decision.
 - The patient avatar area supports local avatar buckets under `static/avatars/*`. If none are found, the UI will use the online cartoon avatar fallback or an inline SVG placeholder.
-- The final report overlay is intentionally centered and non-animating to avoid layout reflows when the overlay is visible.
+
+| Guide | Analytics |
+|---|---|
+| ![Guide page](docs/screenshot-guide.png) | ![Analytics page](docs/screenshot-analytics.png) |
 - Restart is implemented as a page reload to ensure a clean session reset.
 
 ## API (useful for demos)

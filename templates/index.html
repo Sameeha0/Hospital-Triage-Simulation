@@ -4,89 +4,119 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Hospital Triage Simulation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27%3E%3Crect width=%2720%27 height=%2720%27 rx=%275%27 fill=%27%2322c3d6%27/%3E%3Cpath d=%27M8.5 4h3v4.5H16v3h-4.5V16h-3v-4.5H4v-3h4.5z%27 fill=%27%2303141a%27/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body class="game-bg">
     <div class="container">
-      <header>
-        <div class="top-row">
-          <h1>Hospital Triage Simulation</h1>
-          <nav class="nav">
-            <a href="/guide">Guide</a>
-            <a href="/analytics">Analytics</a>
-          </nav>
-        </div>
-        <p class="subtitle">Play as a triage officer during an outbreak - balance care, resources, and public trust.</p>
+      <header class="app-header">
+        <a class="brand" href="/">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="#03141a"><path d="M8 2h4v6h6v4h-6v6H8v-6H2V8h6z"/></svg>
+          </span>
+          <span class="brand-text">
+            <h1>Hospital Triage Simulation</h1>
+            <p>Balance care, resources and public trust during an outbreak.</p>
+          </span>
+        </a>
+        <nav class="nav" aria-label="Main">
+          <a href="/" aria-current="page">Game</a>
+          <a href="/guide">Guide</a>
+          <a href="/analytics">Analytics</a>
+        </nav>
       </header>
 
-      <section class="dashboard">
-        <div class="stat">
-          <strong>Day:</strong> <span id="day">-</span>
+      <section class="dashboard" aria-label="Hospital status">
+        <div class="stat card">
+          <p class="eyebrow">Day</p>
+          <div class="stat-value"><span id="day">-</span><span class="unit">/ 15</span></div>
+          <span class="stat-hint">Simulation ends after day 15</span>
         </div>
-        <div class="stat">
-          <strong>Available beds:</strong> <span id="beds">-</span>
-          <div class="bar">
-            <div id="beds-bar" class="progress"></div>
+        <div class="stat card">
+          <p class="eyebrow">Available beds</p>
+          <div class="stat-value" id="beds">-</div>
+          <div class="bar"><div id="beds-bar" class="progress"></div></div>
+        </div>
+        <div class="stat card">
+          <p class="eyebrow">Public trust</p>
+          <div class="stat-value"><span id="trust">-</span><span class="unit">%</span></div>
+          <div class="bar"><div id="trust-bar" class="progress trust"></div></div>
+        </div>
+        <div class="stat card">
+          <p class="eyebrow">Outcomes</p>
+          <div class="outcomes">
+            <div class="outcome"><span>Treated</span><strong id="treated">0</strong></div>
+            <div class="outcome good"><span>Recovered</span><strong id="recovered">0</strong></div>
+            <div class="outcome bad"><span>Deaths</span><strong id="deaths">0</strong></div>
+            <div class="outcome"><span>Staff infected</span><strong id="staff">0</strong></div>
           </div>
-        </div>
-        <div class="stat">
-          <strong>Public trust:</strong> <span id="trust">-</span>%
-          <div class="bar">
-            <div id="trust-bar" class="progress trust"></div>
-          </div>
-        </div>
-        <div class="stat small">
-          <div>Patients treated: <span id="treated">0</span></div>
-          <div>Deaths: <span id="deaths">0</span></div>
-          <div>Recovered: <span id="recovered">0</span></div>
-          <div>Infected staff: <span id="staff">0</span></div>
         </div>
       </section>
 
       <main>
-        <section class="patient-card" id="patient-card">
-          <h2>Patient</h2>
+        <section class="patient-card card" id="patient-card" aria-live="polite">
+          <div class="patient-head">
+            <div>
+              <p class="eyebrow">Incoming patient</p>
+              <h2>Triage assessment</h2>
+            </div>
+            <span id="risk-badge" class="badge low">-</span>
+          </div>
+
           <div id="patient-info" class="patient-top">
             <div class="avatar" id="avatar" aria-hidden="true"></div>
-            <div class="patient-details">
-              <div class="detail"><strong>Age:</strong> <span id="age">-</span></div>
-              <div class="detail"><strong>Symptoms:</strong> <span id="symptoms">-</span></div>
-              <div class="detail"><strong>Exposure:</strong> <span id="exposure">-</span></div>
-              <div class="detail"><strong>Comorbidity:</strong> <span id="comorbidity">-</span></div>
-            </div>
-            <div class="badge-wrap">
-              <span id="risk-badge" class="badge low">-</span>
-            </div>
+            <dl class="patient-details">
+              <div class="detail"><dt>Age</dt><dd id="age">-</dd></div>
+              <div class="detail"><dt>Recent exposure</dt><dd id="exposure">-</dd></div>
+              <div class="detail"><dt>Symptoms</dt><dd id="symptoms">-</dd></div>
+              <div class="detail"><dt>Comorbidity</dt><dd id="comorbidity">-</dd></div>
+            </dl>
           </div>
+
           <div class="actions">
-            <button id="admit">Admit</button>
-            <button id="discharge">Discharge</button>
-            <button id="isolate">Isolate</button>
+            <button id="admit" class="btn btn-primary">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M2 13V5M2 9h12v4M14 9V7a2 2 0 0 0-2-2H8v4"/></svg>
+              Admit
+            </button>
+            <button id="isolate" class="btn btn-isolate">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.5 13.5 3.5v4c0 3.3-2.3 5.9-5.5 7-3.2-1.1-5.5-3.7-5.5-7v-4z"/></svg>
+              Isolate
+            </button>
+            <button id="discharge" class="btn">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3H3v10h3M10 5l3 3-3 3M13 8H6"/></svg>
+              Discharge
+            </button>
           </div>
-          <div class="extra-actions">
+
+          <div id="message" class="message" role="status"></div>
+
+          <div class="toolbar">
             <div class="export-group" id="export">
-              <span class="export-label">Export report:</span>
-              <button id="export-json" class="muted" data-format="json">JSON</button>
-              <button id="export-csv" class="muted" data-format="csv">CSV</button>
-              <button id="restart-mid" class="muted danger">Restart Game</button>
+              <span class="export-label">Export report</span>
+              <button id="export-json" class="btn btn-small btn-ghost" data-format="json">JSON</button>
+              <button id="export-csv" class="btn btn-small btn-ghost" data-format="csv">CSV</button>
             </div>
+            <button id="restart-mid" class="btn btn-small btn-danger">Restart game</button>
           </div>
-          <div id="message" class="message"></div>
         </section>
       </main>
 
-      <div id="final" class="overlay hidden">
-        <div class="final-box">
-          <h2>Final Report</h2>
+      <div id="final" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="final-title">
+        <div class="final-box card">
+          <p class="eyebrow">Shift complete</p>
+          <h2 id="final-title">Final report</h2>
           <div id="final-stats"></div>
-          <a class="muted" href="/analytics">View Analytics</a>
-          <button id="restart">Restart Game</button>
+          <div class="final-actions">
+            <a class="btn" href="/analytics">View analytics</a>
+            <button id="restart" class="btn btn-primary">Restart game</button>
+          </div>
         </div>
       </div>
 
-      <footer>
-        <small>Educational simulation - not medical advice.</small>
-      </footer>
+      <footer>Educational simulation. Not medical advice.</footer>
     </div>
 
     <script src="/static/script.js"></script>

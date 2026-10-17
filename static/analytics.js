@@ -5,23 +5,30 @@ function drawLineChart(canvas, labels, values, opts){
   ctx.clearRect(0, 0, w, h)
 
   const padding = 54
-  const maxVal = Math.max(...values, 1)
   const minVal = Math.min(...values, 0)
-  const range = Math.max(1, maxVal - minVal)
+  // keep at least 4 units on the axis so gridline labels are whole, distinct numbers
+  const range = Math.max(4, Math.max(...values, 1) - minVal)
+  const maxVal = minVal + range
 
-  ctx.strokeStyle = 'rgba(255,255,255,0.1)'
+  ctx.strokeStyle = 'rgba(148,184,214,0.12)'
   ctx.lineWidth = 1
+  ctx.fillStyle = '#64778c'
+  ctx.font = '500 18px Inter, system-ui, sans-serif'
   for(let i = 0; i < 5; i++){
     const y = padding + ((h - padding * 2) / 4) * i
     ctx.beginPath()
     ctx.moveTo(padding, y)
     ctx.lineTo(w - padding, y)
     ctx.stroke()
+    // value label for each gridline
+    const value = Math.round(maxVal - (range / 4) * i)
+    ctx.fillText(String(value), 8, y + 6)
   }
 
   const stepX = (w - padding * 2) / Math.max(1, values.length - 1)
   ctx.strokeStyle = opts.color
   ctx.lineWidth = 3
+  ctx.lineJoin = 'round'
   ctx.beginPath()
   values.forEach((val, i) => {
     const x = padding + i * stepX
@@ -39,23 +46,20 @@ function drawLineChart(canvas, labels, values, opts){
     const x = padding + i * stepX
     const y = h - padding - ((val - minVal) / range) * (h - padding * 2)
     ctx.beginPath()
-    ctx.arc(x, y, 3.5, 0, Math.PI * 2)
+    ctx.arc(x, y, 5, 0, Math.PI * 2)
     ctx.fill()
   })
 
-  ctx.fillStyle = '#9aa7b2'
-  ctx.font = '12px Segoe UI'
+  ctx.fillStyle = '#93a4b8'
+  ctx.font = '500 18px Inter, system-ui, sans-serif'
+  ctx.textAlign = 'center'
   labels.forEach((label, i) => {
-    if(i % 2 === 0 || labels.length <= 6){
+    if(i % 2 === 0 || labels.length <= 8){
       const x = padding + i * stepX
-      const y = h - 14
-      ctx.save()
-      ctx.translate(x - 6, y)
-      ctx.rotate(-Math.PI / 8)
-      ctx.fillText(label, 0, 0)
-      ctx.restore()
+      ctx.fillText(label, x, h - 16)
     }
   })
+  ctx.textAlign = 'left'
 }
 
 function drawBarChart(canvas, labels, values, opts){
@@ -73,13 +77,18 @@ function drawBarChart(canvas, labels, values, opts){
     const barHeight = ((val / maxVal) * (h - padding * 2))
     const y = h - padding - barHeight
     ctx.fillStyle = opts.colors[i] || opts.color
-    ctx.fillRect(x, y, barWidth, barHeight)
-    ctx.fillStyle = '#cfe3ea'
-    ctx.font = '600 14px Segoe UI'
-    const labelWidth = ctx.measureText(labels[i]).width
-    const labelX = x + (barWidth / 2) - (labelWidth / 2)
-    const labelY = h - 20
-    ctx.fillText(labels[i], labelX, labelY)
+    ctx.beginPath()
+    if (ctx.roundRect) ctx.roundRect(x, y, barWidth, barHeight, [10, 10, 0, 0])
+    else ctx.rect(x, y, barWidth, barHeight)
+    ctx.fill()
+    ctx.textAlign = 'center'
+    ctx.fillStyle = '#e7eef6'
+    ctx.font = '700 22px Inter, system-ui, sans-serif'
+    ctx.fillText(String(val), x + barWidth / 2, y - 12)
+    ctx.fillStyle = '#93a4b8'
+    ctx.font = '600 18px Inter, system-ui, sans-serif'
+    ctx.fillText(labels[i], x + barWidth / 2, h - 22)
+    ctx.textAlign = 'left'
   })
 }
 
@@ -114,9 +123,9 @@ async function fetchAnalytics(){
   ]
 
   updateMetrics(data.summary)
-  drawLineChart(document.getElementById('chart-trust'), labels, trust, {color:'#00bcd4'})
-  drawLineChart(document.getElementById('chart-beds'), labels, bedsUsed, {color:'#ffb74d'})
-  drawBarChart(document.getElementById('chart-outcomes'), ['Recovered', 'Deaths', 'Staff'], outcomes, {color:'#4caf50', colors:['#4caf50','#e53935','#ffb74d']})
+  drawLineChart(document.getElementById('chart-trust'), labels, trust, {color:'#22c3d6'})
+  drawLineChart(document.getElementById('chart-beds'), labels, bedsUsed, {color:'#fbbf24'})
+  drawBarChart(document.getElementById('chart-outcomes'), ['Recovered', 'Deaths', 'Staff infected'], outcomes, {color:'#34d399', colors:['#34d399','#f87171','#fbbf24']})
 }
 
 function bindExport(){

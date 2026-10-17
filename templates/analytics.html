@@ -4,45 +4,59 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Analytics - Hospital Triage Simulation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 20 20%27%3E%3Crect width=%2720%27 height=%2720%27 rx=%275%27 fill=%27%2322c3d6%27/%3E%3Cpath d=%27M8.5 4h3v4.5H16v3h-4.5V16h-3v-4.5H4v-3h4.5z%27 fill=%27%2303141a%27/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="/static/style.css" />
   </head>
   <body>
     <div class="container">
-      <header>
-        <div class="top-row">
-          <h1>Analytics</h1>
-          <nav class="nav">
-            <a href="/">Game</a>
-            <a href="/guide">Guide</a>
-            <a href="/analytics">Analytics</a>
-          </nav>
-        </div>
-        <p class="subtitle">A visual dashboard of trust, capacity, and outcomes over time.</p>
+      <header class="app-header">
+        <a class="brand" href="/">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="#03141a"><path d="M8 2h4v6h6v4h-6v6H8v-6H2V8h6z"/></svg>
+          </span>
+          <span class="brand-text">
+            <h1>Hospital Triage Simulation</h1>
+            <p>Balance care, resources and public trust during an outbreak.</p>
+          </span>
+        </a>
+        <nav class="nav" aria-label="Main">
+          <a href="/">Game</a>
+          <a href="/guide">Guide</a>
+          <a href="/analytics" aria-current="page">Analytics</a>
+        </nav>
       </header>
 
-      <section class="analytics">
+      <div class="page-intro">
+        <h2>Analytics</h2>
+        <p>Trust, capacity and outcomes over time for your current session.</p>
+      </div>
+
+      <section class="analytics card">
         <div class="analytics-head">
-          <h2>Outcome Dashboard</h2>
-          <p class="muted-text">Trends are based on your current session.</p>
+          <h2>Outcome summary</h2>
+          <p class="muted-text">Calculated from every patient you have triaged so far.</p>
         </div>
         <div class="analytics-grid">
           <div class="metric">
-            <div class="metric-label">Survival Rate</div>
+            <div class="metric-label">Survival rate</div>
             <div class="metric-value" id="metric-survival">-</div>
             <div class="metric-sub" id="metric-survival-sub">-</div>
           </div>
           <div class="metric">
-            <div class="metric-label">Staff Impact</div>
+            <div class="metric-label">Staff impact</div>
             <div class="metric-value" id="metric-staff">-</div>
             <div class="metric-sub" id="metric-staff-sub">-</div>
           </div>
           <div class="metric">
-            <div class="metric-label">Trust Momentum</div>
+            <div class="metric-label">Public trust</div>
             <div class="metric-value" id="metric-trust">-</div>
             <div class="metric-sub" id="metric-trust-sub">-</div>
           </div>
           <div class="metric">
-            <div class="metric-label">Bed Utilization</div>
+            <div class="metric-label">Bed utilisation</div>
             <div class="metric-value" id="metric-beds">-</div>
             <div class="metric-sub" id="metric-beds-sub">-</div>
           </div>
@@ -50,35 +64,32 @@
       </section>
 
       <section class="chart-grid">
-        <div class="chart-card">
-          <h3>Public Trust Over Days</h3>
-          <canvas id="chart-trust" width="900" height="300"></canvas>
+        <div class="chart-card card">
+          <h3>Public trust by day</h3>
+          <canvas id="chart-trust" width="900" height="380"></canvas>
         </div>
-        <div class="chart-card">
-          <h3>Bed Utilization Over Days</h3>
-          <canvas id="chart-beds" width="900" height="300"></canvas>
+        <div class="chart-card card">
+          <h3>Beds in use by day</h3>
+          <canvas id="chart-beds" width="900" height="380"></canvas>
         </div>
-        <div class="chart-card">
+        <div class="chart-card card wide">
           <h3>Outcomes</h3>
-          <canvas id="chart-outcomes" width="900" height="300"></canvas>
+          <canvas id="chart-outcomes" width="1800" height="380"></canvas>
         </div>
       </section>
 
-      <section class="analytics export-zone" id="export">
+      <section class="analytics card" id="export">
         <div class="analytics-head">
-          <h2>Export Reports</h2>
-          <p class="muted-text">Download the latest summary in the format your tools prefer.</p>
+          <h2>Export report</h2>
+          <p class="muted-text">Download the latest summary for your own analysis.</p>
         </div>
         <div class="export-group">
-          <span class="export-label">Export report:</span>
-          <button id="export-json" class="muted" data-format="json">JSON</button>
-          <button id="export-csv" class="muted" data-format="csv">CSV</button>
+          <button id="export-json" class="btn btn-small" data-format="json">Download JSON</button>
+          <button id="export-csv" class="btn btn-small" data-format="csv">Download CSV</button>
         </div>
       </section>
 
-      <footer>
-        <small>Educational simulation - not medical advice.</small>
-      </footer>
+      <footer>Educational simulation. Not medical advice.</footer>
     </div>
 
     <script src="/static/analytics.js"></script>
